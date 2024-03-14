@@ -3,8 +3,6 @@ The system's design should prioritize optimal performance and power consumption 
 Comprehensive documentation is essential, outlining the system architecture, configuration choices, and usage recommendations. 
 This documentation should provide insights into the rationale behind design decisions and offer guidance for users on how to effectively utilize the clock generation system.
 Test reports will validate the system's dependability, performance, and power efficiency.
-Through rigorous testing, the system's functionality under various operating conditions and workloads will be assessed, ensuring that it meets specified requirements and performs reliably
-in real-world scenarios. Ultimately, delivering a working and well-documented solution entails
-providing source code for the peripheral clock generating system along with thorough
-documentation and test reports, enabling users to understand, integrate, and utilize the system
-effectively in their embedded applications.
+Through rigorous testing, the system's functionality under various operating conditions and workloads will be assessed, ensuring that it meets specified requirements and performs reliable in real-world scenarios. 
+Ultimately, delivering a working and well-documented solution entails providing source code for the peripheral clock generating system along with thorough documentation and test reports, enabling users to understand, integrate, and utilize the system effectively in their embedded applications.
+By using EDA playground we are solving the statement.
