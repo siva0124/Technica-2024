@@ -1,0 +1,43 @@
+##testbench code:
+`timescale 1ns / 1ps
+
+module tb_top_level;
+  reg ph_clk;
+  reg mc_clk;
+  reg en;
+  wire clk_out;
+
+  // Instantiate the top_level module
+  top_level uut (
+    .ph_clk(ph_clk),
+    .mc_clk(mc_clk),
+    .en(en),
+    .clk_out(clk_out)
+  );
+
+  // Clock generation
+  initial begin
+    $dumpfile("dump.vcd"); $dumpvars;
+    ph_clk = 0;
+    mc_clk = 0;
+    forever #5 ph_clk = ~ph_clk; // Assuming a 10ms clock period for ph_clk
+    forever #10 mc_clk = ~mc_clk; // Assuming a 20ms clock period for mc_clk
+  end
+
+  // Apply test scenarios
+  initial begin
+    // Test scenario 1
+    #20 en = 1;
+    #100 en = 0;
+
+    // Test scenario 2
+    #20 en = 1;
+    #50 en = 0;
+    #50 en = 1;
+    #50 en = 1;
+
+    // Add more test scenarios as needed
+
+    #2000 $finish; // Stop simulation
+  end
+endmodule
