@@ -1,0 +1,112 @@
+DESIGN/RTLCODE:
+module CycleCounter (
+  input wire clk1_high,
+  input wire clk2_low,
+  output reg [31:0] count=0
+);
+  reg [31:0] r_cunt=1;
+  reg [31:0] cycles=0;
+  // Internal counter for counting cycles
+  always@(posedge clk2_low) begin
+      cycles <= cycles + 1;   
+  end
+  always@(posedge clk1_high )
+    begin
+      if(cycles>=2)
+        begin    
+        count<=r_cunt;   
+        end
+      else begin
+        r_cunt<=r_cunt+1;
+       // $display($time,r_cunt);
+      end
+    end
+endmodule
+
+///////////////////////////////////////////////////////////////////////////////////////////
+module input_status(
+  input  clk_in,
+  input clk_ref,
+  input  enable,
+  output reg clk_out=0,
+  output reg mcu_enable,
+);
+ 
+  always @(clk_in) begin
+    if(enable==1&&clk_in==1) begin
+      clk_out<=1;
+      mcu_enable<=1'b1;  
+    end
+    else if(enable==1&&clk_in==0)
+      begin
+         clk_out<=0;
+     	 mcu_enable<=1'b1;
+      end
+    else begin
+      mcu_enable<=0;
+      clk_out=0;
+    end
+  end
+endmodule
+
+
+///////////////////////////////////////////////////////////////////////////////////////////
+module code_div(
+  input bit ph_clk,
+  input bit mc_clk,
+  input bit en,
+  output bit cd_out
+);
+
+  reg [31:0] counter=0;
+  reg [31:0]p_cycles_cunt;
+  reg r_cd_out=0;
+  CycleCounter cc1 (.clk2_low(mc_clk),.clk1_high(ph_clk),.count(p_cycles_cunt));
+  always_ff@(posedge ph_clk)begin
+    if(en==1)    
+	begin
+      $display("-------------------------------------------");
+      $display("time=%0t,cycle count=%0d",$time,p_cycles_cunt);
+      $display("-------------------------------------------");
+      if((counter ==((p_cycles_cunt)/(2^p_cycles_cunt))))
+        		begin
+                  cd_out<=~cd_out;
+          			counter<=0;
+        		end
+      		else
+        		counter<=counter+1;
+    end
+    else
+      begin
+        cd_out<=0;
+      end       
+	end
+endmodule
+
+
+////////////////////////////////////////////////////////////////////////////////////
+module top_level(
+  input bit ph_clk=0,
+  input bit mc_clk=0,
+  input bit en=0,
+  output bit clk_out);
+  
+  
+  bit w_i_clk_out;
+  bit w_i_en;
+  reg r_i_clk;
+
+  
+  input_status uut1 (.clk_in(ph_clk),
+                     .clk_ref(mc_clk),
+                     .enable(en),
+                     .clk_out(w_i_clk_out),
+                     .mcu_enable(w_i_en));
+  
+  code_div uut2 (.ph_clk(r_i_clk),
+           .mc_clk(mc_clk),
+           .en(w_i_en),
+           .cd_out(clk_out));
+  always@(ph_clk) r_i_clk<=w_i_clk_out;
+
+endmodule
